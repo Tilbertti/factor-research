@@ -95,8 +95,10 @@ strategies:
     universe: {top_n: 50, min_traded_value: 1000000, min_price: 5, min_history: 252}
     factor: momentum
     n_positions: 10
-    weighting: equal          # equal | rank
+    weighting: rank          # equal | rank
     rebalance_freq: ME        # pandas frequency, ME = month end
+    start_date: "2016-01-01"
+    benchmark: "OMXHGI.INDX"  # EODHD supported ticker 
 ```
 
 The universe rules are re-checked every day using the previous day's data:
@@ -124,6 +126,15 @@ Each run writes `results/<strategy>/`:
 - `config.json`: the exact strategy and market settings used
 - `report.html`: QuantStats performance report
 
+### Example results
+
+- Above configurated startegy produced equity curve shown below
+
+![Momentum FI equity curve.png](docs/equity_curve_example.png)
+- This strategy backtest with Finnish stock data produced CAGR of 11.05% vs. 9.15% for benchmark before trading costs.
+- Returns came with higher volatility of 18.48 % vs. 16.63 % and bigger max drawdown of 41.2 % vs. 36.04 % compared to benchmark
+- Because of smallish excess return compared to volatility and missing trading costs this is not strong proof for strategy yet. 
+
 ## Known limitations
 
 - **No transaction costs or slippage.**
@@ -131,7 +142,6 @@ Each run writes `results/<strategy>/`:
 - **Delistings are treated as 0% returns** after the last price. A bankruptcy, which in reality is close to −100%, is therefore treated too kindly.
 - **Reused tickers:** when an old and a new company share a ticker, EODHD has only one price series, and only one listing row is kept.
 - **Downloads that fail are skipped** (listed in `data/<market>/failed_tickers.json`). If many delisted stocks fail, some survivorship bias remains.
-- **No benchmark comparison** in the report yet.
 
 ## Ideas for later
 

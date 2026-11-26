@@ -1,0 +1,10 @@
+pandas
+numpy
+pyarrow
+aiohttp
+python-dotenv
+tqdm
+PyYAML
+quantstats
+requests
+matplotlib

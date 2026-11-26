@@ -1,0 +1,40 @@
+# ---------------------------------------------------------------------------
+# Markets: which instruments to download for each EODHD exchange code.
+# Data is cached in data/<market>/. After changing these rules, run with --refresh.
+# ---------------------------------------------------------------------------
+markets:
+  US:
+    exchanges: ["NYSE", "NASDAQ", "NYSE MKT"]   # drops OTC / pink sheets
+  HE:
+    exchanges: null                             # Nasdaq Helsinki: keep everything
+
+
+# ---------------------------------------------------------------------------
+# Strategies: run with  python run_pipeline.py <strategy_name>
+#
+# universe (point-in-time, re-evaluated every day):
+#   top_n              keep the N most traded stocks (null = no limit)
+#   min_traded_value   minimum median daily traded value (close x volume), local currency
+#   min_price          minimum raw close price, local currency
+#   min_history        trading days of history required before a stock is eligible
+# ---------------------------------------------------------------------------
+strategies:
+  momentum_fi:
+    market: HE
+    universe: {top_n: 50, min_traded_value: 1000000, min_price: 1, min_history: 252}
+    factor: momentum
+    n_positions: 10
+    weighting: equal          # equal | rank
+    rebalance_freq: ME        # ME = month end
+    start_date: "2010-01-01"
+    benchmark:
+
+  momentum_us:
+    market: US
+    universe: {top_n: 1000, min_traded_value: 10000000, min_price: 5, min_history: 252}
+    factor: momentum
+    n_positions: 50
+    weighting: equal
+    rebalance_freq: ME
+    start_date: "2000-01-01"
+    benchmark:

@@ -12,7 +12,7 @@ import argparse
 
 import yaml
 
-from data.loader import get_market_data
+from data.loader import get_market_data, fetch_benchmark
 from data.universe import build_universe
 from factors.momentum import calculate_momentum, cross_sectional_zscore
 from paths import SETTINGS
@@ -77,8 +77,14 @@ def run(strategy_name: str, refresh: bool = False):
     print(f"Backtest: {strategy_returns.index[0].date()} to {strategy_returns.index[-1].date()}, "
           f"total return {total:.1%}")
 
-    # 5. Results, with the full settings that produced them.
-    save_results(strategy_returns, strategy_name, {"strategy": params, "market": {market: market_config}})
+    # 5. Add benchmark to results if configured
+    benchmark = None
+    if params.get("benchmark"):
+        benchmark = fetch_benchmark(params["benchmark"])
+        benchmark = benchmark.reindex(strategy_returns.index).fillna(0.0)
+
+    # 6. Results, with the full settings that produced them.
+    save_results(strategy_returns, strategy_name, {"strategy": params, "market": {market: market_config}}, benchmark)
 
 
 if __name__ == "__main__":

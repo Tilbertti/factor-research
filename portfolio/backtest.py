@@ -15,8 +15,10 @@ def run_backtest(returns: pd.DataFrame, scores: pd.DataFrame, params: dict) -> p
     and held (weights drifting) until the next rebalance date.
     Returns daily portfolio returns, starting from the first date with any eligible stocks.
     """
-    returns = returns.sort_index()
-    scores = scores.sort_index()
+    start = params.get("start_date")
+
+    returns = returns.sort_index().loc[start:]
+    scores = scores.sort_index().loc[start:]
     weight_func = WEIGHT_FUNCTIONS[params["weighting"]]
 
     # The last actual trading day of each period (e.g. each month).

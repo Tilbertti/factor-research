@@ -26,8 +26,8 @@ strategies:
     n_positions: 10
     weighting: equal          # equal | rank
     rebalance_freq: ME        # ME = month end
-    start_date: "2010-01-01"
-    benchmark:
+    start_date: "2016-01-01"
+    benchmark: "OMXHGI.INDX"
 
   momentum_us:
     market: US

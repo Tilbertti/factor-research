@@ -6,7 +6,7 @@ import quantstats as qs
 from paths import RESULTS
 
 
-def save_results(returns: pd.Series, strategy_name: str, config: dict):
+def save_results(returns: pd.Series, strategy_name: str, config: dict, benchmark: pd.Series | None = None):
     """
     Save a strategy's results to results/<strategy_name>/:
       strategy_returns.parquet  daily strategy returns
@@ -23,5 +23,5 @@ def save_results(returns: pd.Series, strategy_name: str, config: dict):
     with open(path / "config.json", "w") as f:
         json.dump(config, f, indent=4)
 
-    qs.reports.html(returns, output=str(path / "report.html"), title=strategy_name)
+    qs.reports.html(returns, benchmark, output=str(path / "report.html"), title=strategy_name)
     print(f"Results saved to {path}")

@@ -208,3 +208,19 @@ def get_market_data(market: str, exchanges: list | None = None, refresh: bool = 
     for field in ("adjusted_close", "close"):
         data[field] = data[field].ffill(limit=max_fill_days)
     return data
+
+
+def fetch_benchmark(ticker):
+    url = f"https://eodhd.com/api/eod/{ticker}"
+    params = {"api_token": API_KEY, "fmt": "json", "period": "d"}
+    resp = requests.get(url, params=params, timeout=60)
+    if resp.status_code != 200:
+        raise RuntimeError (f'Benchmark {ticker} failed. Status code: {resp.status_code}')
+
+    data = resp.json()
+    if not isinstance(data, list) or not data:
+        raise RuntimeError (f'No data for benchmark {ticker}. Check the ticker on EODHD.')
+    prices = pd.DataFrame(data)
+    prices['date'] = pd.to_datetime(prices['date'])
+    prices = prices.set_index("date")['adjusted_close']
+    return prices.pct_change().dropna().rename(ticker)
